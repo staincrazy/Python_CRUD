@@ -1,0 +1,8 @@
+#
+1 manages to create flask app
+2 managed to create initialize and update database
+
+TBD
+
+3 create python class with methods C R U D for table (employees)
+4 create HTML table with all these methods execution
