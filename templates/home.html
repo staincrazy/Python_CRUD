@@ -1,28 +1,28 @@
 <html>
   <body>
-    <h1>Add book</h1>
+    <h1>Add Employee Name</h1>
     <form method="POST" action="/">
-      <input type="text" name="title">
+      <input type="text" name="name">
       <input type="submit" value="Add">
     </form>
 
-    <h1>Books</h1>
+    <h1>Employees</h1>
     <table border="1">
-      {% for book in books %}
+      {% for employee in employees %}
         <tr>
           <td>
-            {{book.title}}
+            {{employee.name}}
           </td>
           <td>
             <form method="POST" action="./update" style="display: inline">
-              <input type="hidden" value="{{book.title}}" name="oldtitle">
-              <input type="text" value="{{book.title}}" name="newtitle">
+              <input type="hidden" value="{{employee.name}}" name="old">
+              <input type="text" value="{{employee.name}}" name="new">
               <input type="submit" value="Update">
             </form>
           </td>
           <td>
             <form method="POST" action="./delete" style="display: inline">
-              <input type="hidden" value="{{book.title}}" name="title">
+              <input type="hidden" value="{{employee.name}}" name="name">
               <input type="submit" value="Delete">
             </form>
           </td>

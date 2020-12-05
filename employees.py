@@ -1,6 +1,10 @@
 import os
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask
+from flask import render_template
+from flask import request
+from flask import redirect
+
 from flask_sqlalchemy import SQLAlchemy
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -12,27 +16,49 @@ app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 db = SQLAlchemy(app)
 
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    name = Employees(name=request.form.get("name"))
-    phone = Employees(phone=request.form.get("phone"))
-    email = Employees(email=request.form.get("email"))
-    db.session.add_all([name, phone, email])
+@app.route('/', methods=["GET", "POST"])
+def home():
+    employees = None
+    if request.form:
+        try:
+            employee = Employee(name=request.form.get("name"))
+            db.session.add(employee)
+            db.session.commit()
+        except Exception as e:
+            print("Failed to add book")
+            print(e)
+    employees = Employee.query.all()
+    return render_template("home.html", employees=employees)
+
+
+@app.route("/update", methods=["POST"])
+def update():
+    try:
+        new = request.form.get("new")
+        old = request.form.get("old")
+        employee = Employee.query.filter_by(name=old).first()
+        employee.name = new
+        db.session.commit()
+    except Exception as e:
+        print("Couldn't update book title")
+        print(e)
+    return redirect("/")
+
+
+@app.route("/delete", methods=["POST"])
+def delete():
+    name = request.form.get("name")
+    employee = Employee.query.filter_by(name=name).first()
+    db.session.delete(employee)
     db.session.commit()
-    return render_template("employees.html")
+    return redirect("/")
 
 
-class Employees(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    phone = db.Column(db.String(80))
-    email = db.Column(db.String(80))
+class Employee(db.Model):
+    name = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
 
     def __repr__(self):
-        return "<Employee Details:{}>".format(self.name, self.phone, self.email)
-
-
-# return "<Name: {}>".format(self.name), "<Phone: {}>".format(self.phone), "<Email: {}>".format(self.email)
+        return "<Name: {}>".format(self.name)
 
 
 if __name__ == "__main__":
